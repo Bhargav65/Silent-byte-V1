@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link type="text/css" rel="stylesheet" href="/css/chat.css" />
+  <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+  <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js" type="module"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <title>Silent-Byte</title>
+</head>
+
+<body>
+
+  <div id="avatarDialog" class="avatar-dialog" style="display:none;">
+    <div class="avatar-dialog-content">
+      <span class="close-avatar-dialog">&times;</span>
+      <div class="avatar-grid">
+        <!-- Avatars will be filled dynamically by JS -->
+      </div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanta/0.5.24/vanta.waves.min.js"></script>
+  <div id="vanta-canvas">
+    <br>
+    <br>
+
+    <form method="post" action="/logout" id="logout">
+      <input type="hidden" id="hide" name="hide">
+    </form>
+    <button type="button" class="button" style="margin-bottom:650px; margin-left: 1000px;" onclick="submitForm()"
+      id="leaveRoomBtn">
+      <span class="button__text">Leave room</span>
+      <span class="button__icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          class="feather feather-log-out">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+      </span>
+
+    </button>
+    <div class="chat-container">
+
+
+      <div id="room-selection-container">
+        <div class="circle-buttons-wrapper">
+
+          <div class="circle-container" id="call-container">
+
+            <button id="call">
+              <svg height="25px" version="1.1" viewBox="-2 -2 22 20 " xmlns="http://www.w3.org/2000/svg"
+                xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" xmlns:xlink="http://www.w3.org/1999/xlink"
+                id="call1">
+                <title />
+                <desc />
+                <defs />
+                <g fill="none" fill-rule="evenodd" id="Page-1" stroke="none" stroke-width="1">
+                  <g fill="#000000" id="Icons-Communication" transform="translate(-85.000000, -126.000000)">
+                    <g id="phone" transform="translate(85.000000, 126.000000)">
+                      <path
+                        d="M3.6,7.8 C5,10.6 7.4,12.9 10.2,14.4 L12.4,12.2 C12.7,11.9 13.1,11.8 13.4,12 C14.5,12.4 15.7,12.6 17,12.6 C17.6,12.6 18,13 18,13.6 L18,17 C18,17.6 17.6,18 17,18 C7.6,18 0,10.4 0,1 C0,0.4 0.4,0 1,0 L4.5,0 C5.1,0 5.5,0.4 5.5,1 C5.5,2.2 5.7,3.4 6.1,4.6 C6.2,4.9 6.1,5.3 5.9,5.6 L3.6,7.8 L3.6,7.8 Z"
+                        id="Shape" />
+                    </g>
+                  </g>
+                </g>
+              </svg>
+            </button>
+          </div>
+          <div class="circle-container" id="video-container">
+
+            <button id="connect-button">
+              <svg id="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="30px" fill="none"
+                viewBox="0 0 664 663">
+                <path d="m8 12h22c2.2 0 4 1.8 4 4v16c0 2.2-1.8 4-4 4h-22c-2.2 0-4-1.8-4-4v-16c0-2.2 1.8-4 4-4z"
+                  fill="#4caf50" />
+                <path d="m44 35-10-6v-10l10-6z" fill="#388e3c" />
+              </svg>
+            </button>
+
+          </div>
+          <button class="buttonforaudio" id="disconnectButtonforaudio">
+            <svg xmlns="http://www.w3.org/2000/svg" width="46" viewBox="0 0 46 46" height="46" fill="none"
+              class="svg-icon">
+              <path stroke-width="2" stroke-linecap="round" stroke="#fff" fill-rule="evenodd"
+                d="m14.5037 27.0715c.819-.634 1.7094-1.1699 2.653-1.597.7621-.3521 1.2557-1.1094 1.2699-1.9488-.0073-1.1346.7466-2.1517 1.8673-2.3279 1.7701-.2782 3.5728-.2785 5.3429-.0005 1.1206.1759 1.8744 1.193 1.8669 2.3274.0206.8307.5066 1.5791 1.257 1.9359.981.4173 1.9093.9489 2.7657 1.5838.8765.5876 2.0467.4715 2.791-.2769l2.2507-2.2507c.4294-.4283.6617-1.0157.6414-1.6219-.0308-.5985-.314-1.1559-.7793-1.5337-2.5842-2.0976-5.6309-3.5496-8.888-4.2357-2.9976-.6659-6.1047-.6655-9.1023.0009-3.2453.7041-6.2835 2.1503-8.87655 4.2253l-.12568.1256c-.38501.38-.60996.8929-.62872 1.4334-.02687.6011.20148 1.1854.62847 1.6092l2.25008 2.2501c.7307.7914 1.9343.9202 2.8162.3015z"
+                clip-rule="evenodd">
+              </path>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+      <br>
+      <br>
+      <br>
+
+      <div class="message-container">
+
+
+
+        <div id="waiting-message" class="waiting-message">Waiting for peer to join...</div>
+
+
+      </div>
+      <div class="message receiver-message" id="loading" style="display: none;">
+
+        <img src='/avatars/avatar0.avif' alt="Sender Avatar" class="avatar">
+
+        <div class="typing-loader"></div>
+      </div>
+
+      <div class="message">
+        <!-- Avatar selection widget (place where user's avatar is shown, e.g. above chat input or in profile section) -->
+
+        <div class="chat-controls" style="display:flex; align-items:center; gap:10px;width:100%;">
+          <div class="avatar-select-container" id="user-avatar-select">
+            <img src="/avatars/avatar0.avif" alt="Your Avatar" class="avatar" id="senderAvatar" style="cursor:pointer;">
+            <div class="avatar-options" id="avatarOptions">
+              <img src="/avatars/avatar1.avif" class="avatar-choice selected" data-avatar="/avatars/avatar1.avif"
+                alt="avatar1" tabindex="0">
+              <img src="/avatars/avatar2.avif" class="avatar-choice" data-avatar="/avatars/avatar2.avif" alt="avatar2"
+                tabindex="0">
+              <img src="/avatars/avatar3.avif" class="avatar-choice" data-avatar="/avatars/avatar3.avif" alt="avatar3"
+                tabindex="0">
+
+              <label class="avatar-choice"
+                style="border:2px dashed #00ff6a; display:flex; align-items:center; justify-content:center;">
+                <input type="file" id="customAvatarInput" accept="image/*" style="display:none;">
+                <span style="font-size:18px; color:#00ff6a;">+</span>
+              </label>
+
+              <button id="viewMoreAvatars" style="
+  border: 2px dashed #00ff6a;
+  background: transparent;
+  color: #00ff6a;
+  border-radius: 9999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+">
+                <span style="font-size: 16px;">+</span> View More
+              </button>
+
+              <label id="cameraAvatarBtn" style="display:flex; align-items:center; justify-content:center;">
+                <button id="viewMoreAvatars" style="
+  border: 2px dashed #00ff6a;
+  background: transparent;
+  color: #00ff6a;
+  border-radius: 9999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;">
+                  Live camera
+              </label>
+
+            </div>
+            <video id="cameraPreview" autoplay
+              style="display:none;width:48px;height:48px;border-radius:9999px;object-fit:cover;margin:6px 0;"></video>
+
+
+          </div>
+          <button id="emoji-button"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+              class="bi bi-emoji-smile" viewBox="0 0 16 16" style="fill:#00ff6a" ;>
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+              <path
+                d="M4.285 9.567a.5.5 0 0 1 .683.183A3.5 3.5 0 0 0 8 11.5a3.5 3.5 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683M7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5m4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5" />
+            </svg></button>
+          <input type="text" placeholder="Type your message..." id="msgInput" autocomplete="off" class="input-box"
+            autocomplete="off" style="font-family:'Helvetica', 'Arial', sans-serif; " disabled>
+          <input type="file" id="uploadFile" style="display:none;">
+          <button id="shareFileBtn" title="Send a file" class="icon-btn" style="border:none;background:none;">
+            <i class="fa-solid fa-paperclip" style="font-size:20px; color:#00ff6a;"></i>
+          </button>
+          <button id="sendBtn" type="submit" class="send-btn" disabled tabindex="0" onclick="sendmsg()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 664 663">
+              <path fill="none"
+                d="M646.293 331.888L17.7538 17.6187L155.245 331.888M646.293 331.888L17.753 646.157L155.245 331.888M646.293 331.888L318.735 330.228L155.245 331.888">
+              </path>
+              <path stroke-linejoin="round" stroke-linecap="round" stroke-width="33.67" stroke="#6c6c6c"
+                d="M646.293 331.888L17.7538 17.6187L155.245 331.888M646.293 331.888L17.753 646.157L155.245 331.888M646.293 331.888L318.735 330.228L155.245 331.888">
+              </path>
+            </svg>
+          </button>
+
+          <emoji-picker id="custom-emoji-picker" style="display: none; 
+  position:absolute;
+  left: 140.2px; top: 479px; z-index: 9999; background-color: white;"></emoji-picker>
+          <!-- Add inside your chat-container -->
+
+
+
+        </div>
+
+      </div>
+
+      <emoji-picker id="custom-emoji-picker" style="display: none; 
+  position:absolute;
+  left: 140.2px; top: 479px; z-index: 999; background-color: white;"></emoji-picker>
+      <div id="video-chat-container" class="video-position" style="display:none">
+        <video id="local-video" autoplay="autoplay" muted="muted"></video>
+        <video id="remote-video" autoplay="autoplay"></video>
+        <button class="button1" id="disconnectButton">
+          <svg xmlns="http://www.w3.org/2000/svg" width="46" viewBox="0 0 46 46" height="46" fill="none"
+            class="svg-icon">
+            <path stroke-width="2" stroke-linecap="round" stroke="#fff" fill-rule="evenodd"
+              d="m14.5037 27.0715c.819-.634 1.7094-1.1699 2.653-1.597.7621-.3521 1.2557-1.1094 1.2699-1.9488-.0073-1.1346.7466-2.1517 1.8673-2.3279 1.7701-.2782 3.5728-.2785 5.3429-.0005 1.1206.1759 1.8744 1.193 1.8669 2.3274.0206.8307.5066 1.5791 1.257 1.9359.981.4173 1.9093.9489 2.7657 1.5838.8765.5876 2.0467.4715 2.791-.2769l2.2507-2.2507c.4294-.4283.6617-1.0157.6414-1.6219-.0308-.5985-.314-1.1559-.7793-1.5337-2.5842-2.0976-5.6309-3.5496-8.888-4.2357-2.9976-.6659-6.1047-.6655-9.1023.0009-3.2453.7041-6.2835 2.1503-8.87655 4.2253l-.12568.1256c-.38501.38-.60996.8929-.62872 1.4334-.02687.6011.20148 1.1854.62847 1.6092l2.25008 2.2501c.7307.7914 1.9343.9202 2.8162.3015z"
+              clip-rule="evenodd">
+            </path>
+          </svg>
+        </button>
+      </div>
+
+
+
+
+    </div>
+
+    <div id="status-messages"></div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/webtorrent/1.9.7/webtorrent.min.js"></script>
+  <script src="/js/chat-client.js"></script>
+
+  <script>
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  VANTA BACKGROUND
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    VANTA.WAVES({
+      el: "#vanta-canvas",
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: false,
+      minHeight: 200.00,
+      minWidth: 200.00,
+      scale: 1.00,
+      scaleMobile: 1.00,
+      color: 0x151515,
+      zoom: 0.78
+    });
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  DOM ELEMENTS
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    const msgInput = document.getElementById('msgInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const messagesContainer = document.querySelector('.message-container');
+    const waitingEl = document.getElementById('waiting-message');
+    const videoCallBtn = document.getElementById('connect-button');
+    const audioCallBtn = document.getElementById('call');
+    const videoChatContainer = document.getElementById('video-chat-container');
+    const localVideo = document.getElementById('local-video');
+    const remoteVideo = document.getElementById('remote-video');
+    const disconnectBtn = document.getElementById('disconnectButton');
+    const disconnectBtnforaudio = document.getElementById('disconnectButtonforaudio');
+    const avatarContainer = document.getElementById('user-avatar-select');
+    const emojibtn = document.getElementById('emoji-button');
+    const client = new WebTorrent();
+    const uploadInput = document.getElementById('uploadFile');
+    const cameraBtn = document.getElementById('cameraAvatarBtn');
+    const cameraPreview = document.getElementById('cameraPreview');
+    const customAvatarInput = document.getElementById('customAvatarInput');
+    const viewMoreBtn = document.getElementById('viewMoreAvatars');
+    const avatarDialog = document.getElementById('avatarDialog');
+    const avatarGrid = avatarDialog.querySelector('.avatar-grid');
+    const closeDialog = avatarDialog.querySelector('.close-avatar-dialog');
+    const senderAvatar = document.getElementById('senderAvatar');
+    const avatarChoices = document.querySelectorAll('.avatar-choice');
+    const shareFileBtn = document.getElementById('shareFileBtn');
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  UI STATE VARIABLES
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    let cameraStream = null;
+    let peerAvatar = 'avatars/avatar0.avif';
+    let currentAvatar = 'avatars/avatar0.avif';
+    const myMessages = {};
+    const unseenPeerMsgIds = new Set();
+    let typingTimeout;
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  SESSION â€” get roomCode and role from sessionStorage
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    const roomCode = sessionStorage.getItem('roomCode');
+    const role = sessionStorage.getItem('myRole');
+
+    if (!roomCode || !role) {
+      alert('Room or role missing!');
+      location.href = '/';
+    }
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  INITIALIZE SIGNALING CLIENT & PEER MANAGER
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    const signaling = new SignalingClient(roomCode, role);
+    const peer = new PeerManager(signaling, roomCode, role);
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  EMOJI HANDLERS
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    window.addEventListener('DOMContentLoaded', () => {
+      const emojiBtn = document.getElementById('emoji-button');
+      let emojiPicker = document.getElementById('custom-emoji-picker');
+      const msgInput = document.getElementById('msgInput');
+      document.body.appendChild(emojiPicker);
+
+      emojiBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const pickerVisible = emojiPicker.style.display === 'block';
+        if (pickerVisible) { emojiPicker.style.display = 'none'; return; }
+        emojiPicker.style.display = 'block';
+        const rect = emojiBtn.getBoundingClientRect();
+        const pickerHeight = 280, pickerWidth = 260;
+        let top = rect.bottom + window.scrollY + 8;
+        let left = rect.left + window.scrollX;
+        if (window.innerHeight - rect.bottom < pickerHeight) top = rect.top + window.scrollY - pickerHeight - 8;
+        if (left + pickerWidth > window.innerWidth) left = window.innerWidth - pickerWidth - 8;
+        emojiPicker.style.position = 'absolute';
+        emojiPicker.style.left = left + 'px';
+        emojiPicker.style.top = top + 'px';
+        emojiPicker.style.zIndex = 99999;
+      });
+
+      emojiPicker.addEventListener('emoji-click', event => {
+        const emoji = event.detail.unicode;
+        const start = msgInput.selectionStart;
+        const end = msgInput.selectionEnd;
+        const value = msgInput.value;
+        msgInput.value = value.slice(0, start) + emoji + value.slice(end);
+        msgInput.setSelectionRange(start + emoji.length, start + emoji.length);
+        msgInput.focus();
+        emojiPicker.style.display = 'none';
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!emojiPicker.contains(e.target) && e.target !== emojiBtn) emojiPicker.style.display = 'none';
+      });
+    });
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  BUTTON BINDINGS
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    sendBtn.onclick = sendmsg;
+    shareFileBtn.onclick = () => uploadInput.click();
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  PAGE LIFECYCLE
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    window.addEventListener("beforeunload", function (event) {
+      event.preventDefault();
+      event.returnValue = "";
+    });
+
+    window.addEventListener("pageshow", function (event) {
+      if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+        window.location.replace("/");
+      }
+    });
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  ENABLE / DISABLE CHAT UI
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    function enableChat() {
+      waitingEl.style.display = 'none';
+      msgInput.disabled = false;
+      sendBtn.disabled = false;
+      msgInput.focus();
+      peer.setup(); // Setup WebRTC if not already
+    }
+
+    function disableChat() {
+      waitingEl.style.display = '';
+      msgInput.disabled = true;
+      sendBtn.disabled = true;
+    }
+
+    disableChat(); // Start disabled, waiting for peer
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  WIRE UP SIGNALING EVENTS â†’ UI
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    signaling.on('error', (msg) => {
+      alert(msg);
+      location.href = '/';
+    });
+
+    signaling.on('room-ready', () => {
+      // Room created/joined, waiting for peer (user1) or ready (user2)
+    });
+
+    signaling.on('peer-joined', () => {
+      enableChat();
+      showStatus('Peer has joined the chat!', 'success');
+    });
+
+    signaling.on('disconnected', () => {
+      showStatus('Disconnected from server.', 'error');
+      disableChat();
+      hideVideoUI();
+      showReconnectToast(
+        `<i class="fa-solid fa-rotate-right"></i> Connection lost. Trying to reconnect...`,
+        'info'
+      );
+    });
+
+    signaling.on('reconnected', () => {
+      hideReconnectToast();
+      showStatus('Reconnected!', 'success');
+    });
+
+    signaling.on('reconnect-attempt', (attempt, max) => {
+      showReconnectToast(
+        `<i class="fa-solid fa-rotate-right"></i> Reconnecting... (${attempt}/${max})`,
+        'info'
+      );
+    });
+
+    signaling.on('reconnect-failed', () => {
+      showReconnectToast(
+        `<i class="fa-solid fa-triangle-exclamation"></i> Could not reconnect. Please reload.`,
+        'error'
+      );
+    });
+
+    signaling.on('peer-left', () => {
+      peer.cleanup();
+      showStatus('Peer has left the room. You will be redirected to home page', 'info');
+      setTimeout(() => { window.location.replace("/index.html"); }, 5000);
+    });
+
+    signaling.on('restart-webrtc', () => {
+      peer.cleanup();
+      enableChat();
+    });
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  WIRE UP PEER MANAGER EVENTS â†’ UI
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    peer.on('connected', (isFirst) => {
+      if (isFirst) {
+        showStatus("âœ… Peer connected!", "success");
+      } else {
+        showStatus("âœ… Peer reconnected!", "success");
+      }
+    });
+
+    peer.on('ice-disconnected', () => {
+      showStatus("âš ï¸ Peer connection lost. Trying to recover...", "error");
+    });
+
+    peer.on('ice-failed', () => {
+      showStatus("âš ï¸ Peer connection failed. Restarting...", "error");
+    });
+
+    peer.on('datachannel-open', () => {
+      if (role === 'user2') msgInput.focus();
+    });
+
+    peer.on('datachannel-close', () => {
+      showStatus('Peer connection closed.', 'info');
+    });
+
+    peer.on('datachannel-error', (e) => {
+      showStatus('Data channel error: ' + (e.message || ''), 'error');
+    });
+
+    peer.on('remote-track', (event) => {
+      handleRemoteTrack(event);
+    });
+
+    // Handle data channel messages
+    peer.on('datachannel-message', (data) => {
+      try {
+        var msgData = JSON.parse(data);
+        if (msgData.type === 'disconnect') {
+          showStatus('Peer has disconnected.', 'info');
+          stoppeercall();
+        }
+        if (msgData.type === 'call') {
+          alertingpeer(msgData.callType);
+        }
+        if (msgData.type === 'file' && msgData.magnet) {
+          showReceivedFile(msgData.name, msgData.magnet, msgData.avatar, msgData.id);
+        }
+        if (msgData.type === 'chat') {
+          appendPeerMsg(msgData.text, msgData.id, msgData.avatar || '/avatar1.avif');
+          hideTyping();
+        }
+        else if (msgData.type === 'seen') {
+          markMessageAsSeen(msgData.id);
+        }
+        if (msgData.type === "peer-offline") {
+          disableChat();
+          showStatus("âš ï¸ Peer lost internet. Please wait...", "info");
+        }
+        if (msgData.type === "peer-online") {
+          enableChat();
+          showStatus("âœ… Peer is back online!", "success");
+        }
+      } catch {
+        if (data === '__typing__') { showTyping(); }
+        else if (data === '__stop_typing__') { hideTyping(); }
+        else { appendPeerMsg(data); hideTyping(); }
+      }
+    });
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  CONNECT!
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    signaling.connect();
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  SEND MESSAGE
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    function sendmsg() {
+      var messageInput = document.getElementById('msgInput');
+      var messageText = messageInput.value;
+      if (messageText.trim() !== '') {
+        var messageId = Date.now().toString() + Math.random().toString(16).slice(2);
+        let avatarToSend = currentAvatar;
+        let snapshotData = null;
+        if (currentAvatar === 'camera_live') {
+          snapshotData = getCameraSnapshot();
+          avatarToSend = snapshotData || '/avatar.avif';
+        }
+        let encryptedtext = CryptoJS.AES.encrypt(messageText, roomCode).toString();
+        var messageObj = JSON.stringify({
+          type: 'chat', id: messageId, text: encryptedtext, avatar: avatarToSend
+        });
+
+        // UI feedback
+        var newMessage = document.createElement('div');
+        newMessage.classList.add('message', 'sender-message');
+        newMessage.id = 'msg-' + messageId;
+        newMessage.innerHTML = `<img src="${avatarToSend}" alt="Sender Avatar" class="avatar">
+      <span>${messageText}</span>
+      <span class="plane-icon" title="Sent, not seen yet" style="margin-left:6px;vertical-align:middle;">
+        <dotlottie-wc src="https://lottie.host/dbbd388f-f27a-4e67-ad9b-c38286d2d291/x6rAlcZWDe.lottie"
+        style="width: 42px;height: 40px" speed="1" autoplay loop></dotlottie-wc>
+      </span>
+       <span class="seen-icon" style="display:none;margin-left:6px;vertical-align:middle;" title="Seen"><dotlottie-wc
+  src="https://lottie.host/a3100caf-d968-4f2a-809c-d2a23630d6c6/rjOs1D7sNu.lottie"
+  style="width: 40px;height: 40px" speed="1.4"></dotlottie-wc></span>`;
+        messagesContainer.appendChild(newMessage);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        myMessages[messageId] = { element: newMessage, seen: false };
+
+        // Send via PeerManager (handles retry queue automatically)
+        peer.send(messageObj);
+        peer.send('__stop_typing__');
+      }
+      messageInput.value = '';
+    }
+
+    function appendPeerMsg(text, id, avatar = '/avatar1.avif') {
+      peerAvatar = avatar;
+      let decryptedtext = CryptoJS.AES.decrypt(text, roomCode).toString(CryptoJS.enc.Utf8);
+      var newMessage = document.createElement('div');
+      newMessage.classList.add('message', 'receiver-message');
+      newMessage.id = 'msg-in-' + id;
+      newMessage.innerHTML = `<img src="${avatar}" alt="Sender Avatar" class="avatar">${decryptedtext}`;
+      messagesContainer.appendChild(newMessage);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      if (id) {
+        unseenPeerMsgIds.add(id);
+        messageSeenObserver.observe(newMessage);
+        setTimeout(tryMarkUnseenVisibleMessages, 0);
+      }
+    }
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  FILE SHARING (WebTorrent)
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    function showSenderFilePreview(name, avatar, tmpId) {
+      const container = messagesContainer;
+      function shortenFileName(name, maxChars = 18) {
+        return name.length > maxChars ? name.slice(0, maxChars) + '...' : name;
+      }
+      const displayName = shortenFileName(name);
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'message sender-message';
+      msgDiv.id = 'msg-pending-file-' + tmpId;
+      msgDiv.innerHTML = `
+    <span class="avatar-progress-container" style="position:relative;display:inline-block;">
+      <img src="${avatar}" alt="Sender Avatar" class="avatar">
+      <svg class="avatar-progress-ring" width="36" height="36" style="position:absolute;top:-3px;left:-3px;pointer-events:none;z-index:1;">
+        <circle class="progress-ring__circle" stroke="#00ff6a" stroke-width="3" fill="transparent" r="16" cx="18" cy="18"/>
+      </svg>
+    </span>
+    <span><i class="fa-solid fa-file-arrow-up" style="color:#00ff6a;font-size:17px;vertical-align:middle;"></i></span>
+    <span class="file-name" style="margin-right:8px;">${displayName}</span>
+    <span class="file-progress"></span>
+     <span class="seen-icon" style="display:none;margin-left:6px;vertical-align:middle;" title="Seen"><dotlottie-wc
+  src="https://lottie.host/a3100caf-d968-4f2a-809c-d2a23630d6c6/rjOs1D7sNu.lottie"
+  style="width: 40px;height: 40px" speed="1.4"></dotlottie-wc></span>
+  `;
+      container.appendChild(msgDiv);
+      container.scrollTop = container.scrollHeight;
+      return msgDiv;
+    }
+
+    uploadInput.addEventListener('change', function () {
+      const file = this.files[0];
+      if (!file) return;
+      const tmpId = Date.now();
+      let avatarToSend = currentAvatar;
+      if (currentAvatar === 'camera_live') {
+        const snapshotData = getCameraSnapshot();
+        avatarToSend = snapshotData || '/avatar.avif';
+      }
+      const previewDiv = showSenderFilePreview(file.name, avatarToSend, tmpId);
+      const progressEl = previewDiv.querySelector('.file-progress');
+      const circle = previewDiv.querySelector('.progress-ring__circle');
+      const radius = 16, circumference = 2 * Math.PI * radius;
+      circle.style.strokeDasharray = `${circumference}`;
+      circle.style.strokeDashoffset = circumference;
+      function setProgress(percent) {
+        const offset = circumference - (percent / 100) * circumference;
+        circle.style.strokeDashoffset = offset;
+      }
+      client.seed(file, torrent => {
+        if (peer.isDataChannelOpen()) {
+          const fileMsg = JSON.stringify({
+            type: 'file', name: file.name, magnet: torrent.magnetURI, avatar: avatarToSend, id: tmpId
+          });
+          peer.send(fileMsg);
+          progressEl.textContent = "";
+          setProgress(100);
+          setTimeout(() => { circle.style.opacity = 0; }, 600);
+        } else {
+          progressEl.textContent = 'â— Data channel not open!';
+        }
+      });
+    });
+
+    function showReceivedFile(name, magnet, avatar, id) {
+      const container = messagesContainer;
+      const shortenedName = name.length > 10 ? name.slice(0, 7) + '...' : name;
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'message receiver-message';
+      msgDiv.id = 'msg-in-file-' + (id || Date.now());
+      msgDiv.innerHTML = `
+    <span class="avatar-progress-container" style="position:relative;display:inline-block;">
+      <img src="${avatar}" alt="Sender Avatar" class="avatar">
+      <svg class="avatar-progress-ring" width="36" height="36" style="position:absolute;top:-3px;left:-3px;pointer-events:none;z-index:1;">
+        <circle class="progress-ring__circle" stroke="#00ff6a" stroke-width="3" fill="transparent" r="16" cx="18" cy="18" style="transition: stroke-dasharray 0.15s;"/>
+      </svg>
+    </span>
+    <span><i class="fa-solid fa-file-arrow-down" style="color:#00ff6a;font-size:17px;vertical-align:middle;"></i></span>
+    <span style="margin-right:8px" title="${name}">${shortenedName}</span>
+    <button class="shared-file-download" style="margin-right:8px;">Download</button>
+    <span class="file-progress"></span>
+    <span class="plane-icon" title="Sent, not seen yet" style="margin-left:6px;vertical-align:middle;"></span>
+     <span class="seen-icon" style="display:none;margin-left:6px;vertical-align:middle;" title="Seen"><dotlottie-wc
+  src="https://lottie.host/a3100caf-d968-4f2a-809c-d2a23630d6c6/rjOs1D7sNu.lottie"
+  style="width: 40px;height: 40px" speed="1.4"></dotlottie-wc></span>
+  `;
+      const svgRing = msgDiv.querySelector('.avatar-progress-ring');
+      const circle = msgDiv.querySelector('.progress-ring__circle');
+      const radius = 16;
+      const circumference = 2 * Math.PI * radius;
+      circle.style.strokeDasharray = `${circumference} ${circumference}`;
+      circle.style.strokeDashoffset = circumference;
+      const setProgress = (percent) => {
+        const offset = circumference - (percent / 100) * circumference;
+        circle.style.strokeDashoffset = offset;
+      };
+      const downloadBtn = msgDiv.querySelector('.shared-file-download');
+      const progressEl = msgDiv.querySelector('.file-progress');
+      downloadBtn.onclick = function () {
+        downloadBtn.disabled = true;
+        progressEl.textContent = "Downloading...";
+        downloadBtn.style.display = 'none';
+        setProgress(0);
+        client.add(magnet, torrent => {
+          let fileBlobURL = null;
+          torrent.on('download', () => {
+            const percent = ((torrent.downloaded / torrent.length) * 100);
+            setProgress(percent);
+          });
+          torrent.on('done', () => {
+            progressEl.textContent = "Downloaded!";
+            torrent.files.forEach(file => {
+              file.getBlob((err, blob) => {
+                if (err) { progressEl.textContent = "Error downloading file"; return console.error(err); }
+                fileBlobURL = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = "none"; a.href = fileBlobURL; a.download = file.name;
+                document.body.appendChild(a); a.click(); a.remove();
+                downloadBtn.style.display = '';
+                downloadBtn.disabled = false;
+                downloadBtn.textContent = "Download Again";
+                downloadBtn.onclick = function () {
+                  const a2 = document.createElement('a');
+                  a2.style.display = "none"; a2.href = fileBlobURL; a2.download = file.name;
+                  document.body.appendChild(a2); a2.click(); a2.remove();
+                };
+              });
+            });
+          });
+        });
+      };
+      container.appendChild(msgDiv);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  CAMERA AVATAR
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    cameraBtn.addEventListener('click', async function () {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { alert('Camera not supported!'); return; }
+      try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        cameraPreview.srcObject = cameraStream;
+        cameraPreview.style.display = 'block';
+        senderAvatar.style.display = 'none';
+        document.querySelectorAll('.avatar-choice').forEach(a => a.classList.remove('selected'));
+        cameraBtn.classList.add('selected');
+        currentAvatar = 'camera_live';
+        senderAvatar.src = '';
+      } catch (err) { alert('Unable to access camera: ' + err.message); }
+    });
+
+    function getCameraSnapshot() {
+      if (!cameraPreview.srcObject) return null;
+      const canvas = document.createElement('canvas');
+      canvas.width = cameraPreview.videoWidth; canvas.height = cameraPreview.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(cameraPreview, 0, 0, canvas.width, canvas.height);
+      return canvas.toDataURL('image/jpeg', 0.5);
+    }
+
+    const avatarImages = [];
+    for (let i = 0; i < 16; i++) avatarImages.push(`/avatars/avatar${i}.avif`);
+
+    viewMoreBtn.addEventListener('click', function () {
+      avatarGrid.innerHTML = '';
+      for (let i = 0; i < 16; i++) {
+        const img = document.createElement('img');
+        img.className = 'avatar-choice'; img.tabIndex = 0;
+        if (avatarImages[i]) {
+          img.src = avatarImages[i]; img.dataset.avatar = avatarImages[i];
+          img.addEventListener('click', function () {
+            currentAvatar = this.dataset.avatar; senderAvatar.src = this.dataset.avatar;
+            document.querySelectorAll('.avatar-choice').forEach(a => a.classList.remove('selected'));
+            this.classList.add('selected');
+            avatarDialog.style.display = 'none';
+          });
+        } else { img.style.opacity = '0'; img.style.pointerEvents = 'none'; }
+        if (avatarImages[i] === currentAvatar) img.classList.add('selected');
+        avatarGrid.appendChild(img);
+      }
+      avatarDialog.style.display = 'flex';
+    });
+    closeDialog.onclick = () => avatarDialog.style.display = 'none';
+    avatarDialog.onclick = function (e) { if (e.target === avatarDialog) avatarDialog.style.display = 'none'; };
+
+    customAvatarInput.addEventListener('change', function () {
+      const file = this.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        currentAvatar = e.target.result; senderAvatar.src = currentAvatar;
+        const avatarChoices = document.querySelectorAll('.avatar-choice');
+        avatarChoices.forEach(choice => choice.classList.remove('selected'));
+        customAvatarInput.parentElement.classList.add('selected');
+      };
+      reader.readAsDataURL(file);
+    });
+
+    const avatarOptions = document.getElementById('avatarOptions');
+    let optionHover = false, avatarHover = false;
+    avatarContainer.addEventListener('mouseenter', () => { avatarOptions.style.display = 'flex'; avatarHover = true; });
+    avatarContainer.addEventListener('mouseleave', () => { setTimeout(() => { if (!optionHover && !avatarHover) avatarOptions.style.display = 'none'; }, 50); });
+    avatarOptions.addEventListener('mouseenter', () => { optionHover = true; avatarOptions.style.display = 'flex'; });
+    avatarOptions.addEventListener('mouseleave', () => { optionHover = false; avatarHover = false; avatarOptions.style.display = 'none'; });
+
+    function stopCamera() {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraPreview.style.display = 'none'; cameraStream = null;
+        senderAvatar.style.display = 'block';
+        currentAvatar = '/avatar.avif'; senderAvatar.src = currentAvatar;
+      }
+    }
+
+    avatarChoices.forEach(choice => {
+      choice.addEventListener('click', function () {
+        if (currentAvatar === 'camera_live') stopCamera();
+        avatarChoices.forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+        const newAvatar = this.getAttribute('data-avatar');
+        currentAvatar = newAvatar; senderAvatar.src = newAvatar;
+      });
+    });
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  TYPING INDICATOR
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    msgInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") { event.preventDefault(); sendBtn.click(); }
+    });
+
+    msgInput.addEventListener('input', () => {
+      peer.send('__typing__');
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => { peer.send('__stop_typing__'); }, 1500);
+    });
+
+    function showTyping() {
+      const typingEl = document.getElementById('loading');
+      typingEl.querySelector("img").src = peerAvatar || '/avatar.avif';
+      if (typingEl) typingEl.style.display = 'flex';
+    }
+    function hideTyping() {
+      const typingEl = document.getElementById('loading');
+      if (typingEl) typingEl.style.display = 'none';
+    }
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  SEEN LOGIC
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    function isPageReallyVisible() { return document.visibilityState === 'visible'; }
+    function isInView(el, container) {
+      const rect = el.getBoundingClientRect();
+      const parentRect = container.getBoundingClientRect();
+      const visibleTop = Math.max(rect.top, parentRect.top);
+      const visibleBottom = Math.min(rect.bottom, parentRect.bottom);
+      return Math.max(0, visibleBottom - visibleTop) >= 0.8 * rect.height;
+    }
+    function tryMarkUnseenVisibleMessages() {
+      if (!isPageReallyVisible()) return;
+      unseenPeerMsgIds.forEach(id => {
+        const el = document.getElementById('msg-in-' + id);
+        if (el && isInView(el, messagesContainer)) sendSeenForMessage(id);
+      });
+    }
+
+    const messageSeenObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && isPageReallyVisible()) {
+          const id = entry.target.id.replace('msg-in-', '');
+          if (unseenPeerMsgIds.has(id)) sendSeenForMessage(id);
+        }
+      });
+    }, { root: messagesContainer, threshold: 0.8 });
+
+    document.addEventListener('visibilitychange', tryMarkUnseenVisibleMessages);
+    messagesContainer.addEventListener('scroll', tryMarkUnseenVisibleMessages);
+
+    function sendSeenForMessage(id) {
+      if (peer.isDataChannelOpen()) {
+        peer.send(JSON.stringify({ type: 'seen', id: id }));
+        unseenPeerMsgIds.delete(id);
+      }
+    }
+
+    function markMessageAsSeen(messageId) {
+      var obj = myMessages[messageId];
+      if (obj && !obj.seen && obj.element) {
+        obj.seen = true;
+        var check = obj.element.querySelector('.seen-icon');
+        if (check) {
+          check.innerHTML = `<dotlottie-wc src="https://lottie.host/a3100caf-d968-4f2a-809c-d2a23630d6c6/rjOs1D7sNu.lottie" style="width:40px;height:40px" speed="1.4" autoplay></dotlottie-wc>`;
+          check.style.display = 'inline';
+        }
+        obj.element.classList.add('seen');
+      }
+    }
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  VIDEO / AUDIO CALL UI
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    function showVideoUI() { videoChatContainer.style.display = ''; }
+    function hideVideoUI() {
+      videoChatContainer.style.display = 'none';
+      document.getElementById('call-container').style.display = 'block';
+      document.getElementById('video-container').style.display = 'block';
+      if (localVideo.srcObject) { localVideo.srcObject.getTracks().forEach(track => track.stop()); localVideo.srcObject = null; }
+      if (remoteVideo.srcObject) { remoteVideo.srcObject.getTracks().forEach(track => track.stop()); remoteVideo.srcObject = null; }
+      peer.stopMedia();
+    }
+
+    function showAudioUI() { document.querySelector(".buttonforaudio").style.display = "flex"; }
+
+    function stoppeercall() {
+      disconnectBtnforaudio.style.display = 'none';
+      videoChatContainer.style.display = 'none';
+      document.getElementById('call-container').style.display = 'block';
+      document.getElementById('video-container').style.display = 'block';
+      if (localVideo.srcObject) { localVideo.srcObject.getTracks().forEach(track => track.stop()); localVideo.srcObject = null; }
+      if (remoteVideo.srcObject) { remoteVideo.srcObject.getTracks().forEach(track => track.stop()); remoteVideo.srcObject = null; }
+      peer.stopMedia();
+    }
+
+    async function startMedia(isVideo = true) {
+      try {
+        const stream = await peer.startMedia(isVideo);
+        if (isVideo) { showVideoUI(); localVideo.srcObject = stream; }
+        else { showAudioUI(); }
+      } catch (err) {
+        console.error("Error starting call:", err);
+        alert('Could not start call: ' + err.message);
+      }
+    }
+
+    audioCallBtn.onclick = async function () {
+      await startMedia(false);
+      if (peer.isDataChannelOpen()) {
+        document.getElementById('video-container').style.display = 'none';
+        document.getElementById('call-container').style.display = 'none';
+        peer.send(JSON.stringify({ type: 'call', callType: 'audio' }));
+      }
+    };
+
+    videoCallBtn.onclick = async function () {
+      await startMedia(true);
+      if (peer.isDataChannelOpen()) {
+        document.getElementById('call-container').style.display = 'none';
+        document.getElementById('video-container').style.display = 'none';
+        peer.send(JSON.stringify({ type: 'call', callType: 'video' }));
+      }
+    };
+
+    disconnectBtn.onclick = function () {
+      if (peer.isDataChannelOpen()) {
+        document.getElementById('call-container').style.display = 'none';
+        document.getElementById('video-container').style.display = 'none';
+        peer.send(JSON.stringify({ type: 'disconnect', callType: 'video' }));
+        hideVideoUI();
+      }
+    };
+
+    disconnectBtnforaudio.onclick = function () {
+      disconnectBtnforaudio.style.display = 'none';
+      if (peer.isDataChannelOpen()) {
+        document.getElementById('call-container').style.display = 'none';
+        document.getElementById('video-container').style.display = 'none';
+        peer.send(JSON.stringify({ type: 'disconnect', callType: 'video' }));
+        hideVideoUI();
+      }
+    };
+
+    function handleRemoteTrack(event) {
+      if (!peer.remoteStream) {
+        peer.remoteStream = new MediaStream();
+        remoteVideo.srcObject = peer.remoteStream;
+      }
+      event.streams[0].getTracks().forEach(track => {
+        if (!peer.remoteStream.getTracks().find(t => t.id === track.id)) {
+          peer.remoteStream.addTrack(track);
+        }
+      });
+    }
+
+    function alertingpeer(callType) {
+      const videoContainer = document.getElementById('video-container');
+      const audioContainer = document.getElementById('call-container');
+      if (callType === 'video' && videoContainer.checkVisibility()) {
+        showStatus('Incoming Video call! Click to answer.', 'info');
+        document.getElementById('call-container').style.display = 'none';
+      } else if (callType === 'audio' && audioContainer.checkVisibility()) {
+        showStatus('Incoming audio call! Click to answer.', 'info');
+        document.getElementById('video-container').style.display = 'none';
+      }
+    }
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  LEAVE ROOM
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    function submitForm() {
+      signaling.leave();
+      peer.cleanup();
+      window.location.replace("/index.html");
+    }
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  STATUS TOASTS
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    function showStatus(message, type) {
+      const statusContainer = document.getElementById('status-messages');
+      const statusDiv = document.createElement('div');
+      statusDiv.className = `status ${type}`;
+      statusDiv.textContent = message;
+      statusContainer.appendChild(statusDiv);
+      setTimeout(() => { statusDiv.remove(); }, 5000);
+    }
+
+    function showReconnectToast(message, type = 'info') {
+      let id = 'reconnect-toast';
+      let toast = document.getElementById(id);
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = id;
+        toast.className = `toast ${type}`;
+        document.getElementById('status-messages').appendChild(toast);
+      }
+      toast.innerHTML = message;
+      toast.className = `toast ${type}`;
+    }
+
+    function hideReconnectToast() {
+      let toast = document.getElementById('reconnect-toast');
+      if (toast) toast.remove();
+    }
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  DRAG VIDEO CONTAINER
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    let offsetX, offsetY;
+    function startDrag(e) {
+      offsetX = e.clientX - videoChatContainer.getBoundingClientRect().left;
+      offsetY = e.clientY - videoChatContainer.getBoundingClientRect().top;
+      document.addEventListener('mousemove', drag);
+      document.addEventListener('mouseup', endDrag);
+    }
+    function drag(e) {
+      videoChatContainer.style.left = `${e.clientX - offsetX}px`;
+      videoChatContainer.style.top = `${e.clientY - offsetY}px`;
+    }
+    function endDrag() {
+      document.removeEventListener('mousemove', drag);
+      document.removeEventListener('mouseup', endDrag);
+    }
+    videoChatContainer.addEventListener('mousedown', startDrag);
+
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    //  ONLINE / OFFLINE HANDLING
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    function handleOffline() {
+      disableChat();
+      showStatus("âš ï¸ You are offline. Waiting for internet...", "error");
+      if (peer.isDataChannelOpen()) {
+        peer.send(JSON.stringify({ type: "peer-offline" }));
+      }
+    }
+
+    function handleOnline() {
+      showStatus("âœ… Internet reconnected. Restoring chat...", "success");
+      if (peer.isDataChannelOpen()) {
+        peer.send(JSON.stringify({ type: "peer-online" }));
+      }
+      // Socket.io auto-reconnect will handle the rest
+    }
+
+    window.addEventListener("offline", handleOffline);
+    window.addEventListener("online", handleOnline);
+
+  </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Room</title>
+  <style>
+    * { margin: 0; padding: 0; }
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    #vanta-canvas { height: 100%; }
+    #randomCode {
+      color: #000;
+      padding: 20px;
+      font-weight: bolder;
+      border-radius: 30px;
+      background-color: #fff;
+      font-size: 16px;
+      width: 170px;
+      text-align: center;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+    .content__button {
+      position: relative;
+      font-size: 17px;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 1em 2.5em;
+      display: inline-block;
+      border-radius: 6em;
+      transition: all .2s;
+      border: none;
+      font-family: inherit;
+      font-weight: 500;
+      color: black;
+      background-color: white;
+      margin-bottom: 20px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    .content__button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    .content__button:active {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+    .content__button::after {
+      content: "";
+      display: inline-block;
+      height: 100%;
+      width: 100%;
+      border-radius: 100px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      background-color: #fff;
+      transition: all .4s;
+    }
+    .content__button:hover::after {
+      transform: scaleX(1.4) scaleY(1.6);
+      opacity: 0;
+    }
+    .button {
+      /* as before ... */
+      --main-focus: #2d8cf0;
+      --font-color: #ffffff;
+      --bg-color-sub: rgb(255, 255, 255);
+      --bg-color: rgba(26, 26, 26, 0.25);
+      box-shadow: 0 8px 32px 0 rgba(41, 41, 41, 0.37);
+      backdrop-filter: blur(10.5px);
+      --main-color: 	#ffffff;
+      width: 150px;
+      height: 40px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      border: 2px solid var(--main-color);
+      box-shadow: 4px 4px var(--main-color);
+      background-color: var(--bg-color);
+      border-radius: 10px;
+      overflow: hidden;
+      position: absolute;
+      top: 10px;
+      right: 30px;
+    }
+    .button, .button__icon, .button__text { transition: all 0.3s;}
+    .button .button__text { transform: translateX(20px); color: var(--font-color); font-weight: 600;}
+    .button .button__icon { position: absolute; transform: translateX(109px); height: 41px; width: 40px; background-color: var(--bg-color-sub); display: flex; align-items: center; justify-content: center;}
+    .button .svg { width: 1px; height: 10px; fill: var(--main-color);}
+    .button:hover { background: var(--bg-color);}
+    .button:hover .button__text { color: transparent;}
+    .button:hover .button__icon { width: 148px; transform: translateX(0);}
+    .button:active { transform: translate(3px, 3px); box-shadow: 0px 0px var(--main-color);}
+    .s { height: 40px; width: 40px; margin-top: 5px;}
+  </style>
+</head>
+<body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanta/0.5.24/vanta.waves.min.js"></script>
+  <div id="vanta-canvas">
+    <div class="container">
+      <input type="text" id="randomCode" disabled placeholder="Room Code">
+      <button onclick="generateCode()" class="content__button">Generate Code</button>
+      <button type="button" id="submitBtn" class="content__button" style="display:none;">Create Room</button>
+      <a href="/join_room">
+        <button type="button" class="button" style="margin-bottom:650px; margin-left: 1000px;">
+          <span class="button__text">Join room</span>
+          <span class="button__icon">
+            <!-- ...SVG as before... -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 40" x="0px" y="0px" class="s">
+              <g data-name="bag">
+                <path d="M24,29.75H16A4.75,4.75,0,0,1,11.25,25V21a.75.75,0,0,1,1.5,0v4A3.26,3.26,0,0,0,16,28.25h8A3.26,3.26,0,0,0,27.25,25V7A3.26,3.26,0,0,0,24,3.75H16A3.26,3.26,0,0,0,12.75,7v4a.75.75,0,0,1-1.5,0V7A4.75,4.75,0,0,1,16,2.25h8A4.75,4.75,0,0,1,28.75,7V25A4.75,4.75,0,0,1,24,29.75Z"/>
+                <path d="M20,16.75H3a.75.75,0,0,1,0-1.5H20a.75.75,0,0,1,0,1.5Z"/>
+                <path d="M17,20.75a.74.74,0,0,1-.53-.22.75.75,0,0,1,0-1.06L19.94,16l-3.47-3.47a.75.75,0,0,1,1.06-1.06l4,4a.75.75,0,0,1,0,1.06l-4,4A.74.74,0,0,1,17,20.75Z"/>
+              </g>
+              <text x="0" y="47" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">Created by Niko Mufrida</text>
+              <text x="0" y="52" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">from the Noun Project</text>
+            </svg>
+          </span>
+        </button>
+      </a>
+    </div>
+  </div>
+  <script>
+    VANTA.WAVES({
+      el: "#vanta-canvas",
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: false,
+      minHeight: 200.00,
+      minWidth: 200.00,
+      scale: 1.00,
+      scaleMobile: 1.00,
+      color: 0x151515,
+      zoom: 0.78
+    });
+  </script>
+  <script>
+    function generateCode() {
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let code = '';
+      for (let i = 0; i < 6; i++) code += characters.charAt(Math.floor(Math.random() * characters.length));
+      document.getElementById('randomCode').value = code;
+      document.getElementById('submitBtn').style.display = 'inline-block';
+    }
+    document.getElementById('submitBtn').onclick = function(e) {
+      e.preventDefault();
+      const code = document.getElementById('randomCode').value;
+      if (!code) return alert("Generate a code first!");
+      
+            
+          sessionStorage.setItem('roomCode', code);
+          sessionStorage.setItem('myRole', "user1"); // "user1"
+          window.location.href = "/chat.html";
+       
+        
+    };
+  </script>
+</body>
+</html>

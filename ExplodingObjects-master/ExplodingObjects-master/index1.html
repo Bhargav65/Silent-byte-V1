@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Exploding 3D Objects | Demo 1 | Codrops</title>
+		<meta name="description" content="An exploding objects effect made with three.js." />
+		<meta name="keywords" content="webgl, 3d, objects, exploding, shatter, fragment, animation, template, javascript" />
+		<meta name="author" content="Codrops" />
+		<link rel="shortcut icon" href="favicon.ico">
+		<link rel="stylesheet" href="https://use.typekit.net/ldt4auk.css">
+		<link rel="stylesheet" type="text/css" href="css/base.css" />
+		<script>document.documentElement.className="js";var supportsCssVars=function(){var e,t=document.createElement("style");return t.innerHTML="root: { --tmp-var: bold; }",document.head.appendChild(t),e=!!(window.CSS&&window.CSS.supports&&window.CSS.supports("font-weight","var(--tmp-var)")),t.parentNode.removeChild(t),e};supportsCssVars()||alert("Please view this demo in a modern browser that supports CSS Variables.");</script>
+	</head>
+	<body class="demo-1 loading">
+		<main>
+			<div id="container"></div>
+			<div class="frame">
+				
+				<div class="frame__deco">
+					<span class="frame__deco-inner">SilentByteHub</span>
+				</div>
+				
+			</div><!-- /frame -->
+			<div class="content">
+				<div class="content__item">
+					<button id="takeMeInButton" class="content__button">Take me in</button>
+				</div>
+				<div class="content__item content__item--details">
+					<h3 class="content__location">Let's Chat</h3>
+					<h1 class="content__title">SilentByteHub</h1>
+					<p class="content__date">Fast & Secured</p>
+				</div>
+				<div class="content__item content__item--details content__item--columns">
+					<div class="content__inner">
+						<span class="content__inner-item content__inner-item--date">14</span>
+						<span class="content__inner-item">DJ Madow</span>
+						<span class="content__inner-item">Franklin Doe</span>
+						<span class="content__inner-item">Josh Z</span>
+						<span class="content__inner-item">Stevvy</span>
+						<span class="content__inner-item">Supernova</span>
+						<span class="content__inner-item">Kiz</span>
+						<span class="content__inner-item">BrickX</span>
+						<span class="content__inner-item">Miss Kara</span>
+						
+					</div>
+					
+				</div>
+			</div>
+		</main>
+		<script src="js/ico.js"></script>
+		<script src="js/TweenMax.min.js"></script>
+		<script src="js/charming.min.js"></script>
+		<script src="js/demo.js"></script>
+		<script>
+			// Automatically click the button when the page loads
+			window.onload = function() {
+				var button = document.getElementById('takeMeInButton');
+				button.click();
+			};
+		</script>
+	</body>
+</html>

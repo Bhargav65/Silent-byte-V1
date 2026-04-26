@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yjs P2P Demo</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        #log { background: #f0f0f0; padding: 10px; border: 1px solid #ccc; height: 150px; overflow-y: scroll; }
+        .item { padding: 5px; border-bottom: 1px solid #eee; }
+    </style>
+</head>
+<body>
+
+    <h2>P2P Shared List (Yjs + WebRTC)</h2>
+    <p><i>Open this file in two different browser tabs/windows to see the magic.</i></p>
+    
+    <input type="text" id="input" placeholder="Add an item..." />
+    <button id="addBtn">Add</button>
+    <button id="clearBtn">Clear All</button>
+
+    <h3>Shared List:</h3>
+    <div id="list"></div>
+
+    <h3>Connection Log:</h3>
+    <div id="log"></div>
+
+    <script type="module">
+        // Import Yjs and the WebRTC Provider directly from a CDN (no build step needed)
+        import * as Y from 'https://esm.sh/yjs@13.6.1';
+        import { WebrtcProvider } from 'https://esm.sh/y-webrtc@10.2.5';
+
+        // 1. Create the Yjs Document (The shared database)
+        const ydoc = new Y.Doc();
+
+        // 2. Connect to peers via WebRTC
+        // 'my-room-name': Peers must be in the same room to see each other.
+        // { signaling: [...] }: Uses public signaling servers by default, but you can add your own.
+        const provider = new WebrtcProvider('my-unique-room-name-1234', ydoc, {
+            signaling: ['wss://signaling.yjs.dev', 'wss://y-webrtc-signaling-eu.herokuapp.com', 'wss://y-webrtc-signaling-us.herokuapp.com']
+        });
+
+        // 3. Define a shared type (A shared Array)
+        const yArray = ydoc.getArray('my-todo-list');
+
+        // --- UI Logic Below ---
+
+        const listDiv = document.getElementById('list');
+        const logDiv = document.getElementById('log');
+
+        // Function to render the list
+        const render = () => {
+            listDiv.innerHTML = '';
+            yArray.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.textContent = item;
+                listDiv.appendChild(div);
+            });
+        };
+
+        // 4. Observe changes (When *anyone* updates the array, this runs)
+        yArray.observe(() => {
+            render();
+        });
+
+        // Add Item
+        document.getElementById('addBtn').onclick = () => {
+            const val = document.getElementById('input').value;
+            if(val) {
+                // yArray.push is a Yjs method that syncs automatically
+                yArray.push([val]); 
+                document.getElementById('input').value = '';
+            }
+        };
+
+        // Clear List
+        document.getElementById('clearBtn').onclick = () => {
+            yArray.delete(0, yArray.length);
+        };
+
+        // Logging Connection Status
+        provider.on('status', event => {
+            const p = document.createElement('p');
+            p.textContent = `Status: ${event.status} (Connected to signaling)`;
+            logDiv.appendChild(p);
+        });
+
+        provider.on('peers', event => {
+            const p = document.createElement('p');
+            p.textContent = `Peers changed: You are connected to ${event.added.length + event.removed.length} other(s).`;
+            logDiv.appendChild(p);
+        });
+
+        // Initial render
+        render();
+    </script>
+</body>
+</html>

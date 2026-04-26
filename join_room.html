@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Silent-Byte</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        body, html {
+            height: 100%;
+            overflow: hidden; /* Prevent scrollbar */
+        }
+
+        #vanta-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        #codeBox {
+            color: rgb(0, 0, 0); /* Set text color to black */
+            padding: 20px;
+            font-weight: bolder;
+            border-radius: 30px;
+            background-color: rgb(255, 255, 255);
+        }
+        #form-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 1; /* Ensure the form is on top of the canvas */
+        }
+
+        .buttons button {
+            color: #fff;
+            border: 0;
+            outline: 0;
+            width: 200px;
+            font-size: 24px;
+            height: 50px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 50px;
+        }
+
+        .buttons .info {
+            background: skyblue;
+        }
+
+        #toastBox {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 18px;
+            font-family:'Helvetica', 'Arial', sans-serif;
+        }
+
+        .toast {
+            width: 300px;
+            height: 60px;
+            background: #fff;
+            font-weight: bold;
+
+            margin: 15px 0;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            position: relative;
+            border-radius: 5px;
+            transform: translateX(100%);
+            animation: moveLeft 0.4s linear forwards;
+        }
+
+        @keyframes moveLeft {
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .toast i {
+            margin: 0 20px;
+            font-size: 35px;
+            color: green;
+        }
+
+        .toast.info i {
+            color: rgb(40, 41, 41);
+            size: 10px;
+        }
+
+        .toast::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 5px;
+            background: green;
+            animation: anim 5s linear;
+        }
+
+        @keyframes anim {
+            100% {
+                width: 0;
+            }
+        }
+
+        .toast.info::after {
+            background: rgb(124, 124, 124);
+        }
+        
+        .content__button {
+            position: relative;
+            font-size: 17px;
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: 1em 2.5em;
+            display: inline-block;
+            border-radius: 6em;
+            transition: all .2s;
+            border: none;
+            font-family: inherit;
+            font-weight: 500;
+            color: black;
+            background-color: white;
+        }
+
+        .content__button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .content__button:active {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .content__button::after {
+            content: "";
+            display: inline-block;
+            height: 100%;
+            width: 100%;
+            border-radius: 100px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            transition: all .4s;
+        }
+
+        .content__button::after {
+            background-color: #fff;
+        }
+
+        .content__button:hover::after {
+            transform: scaleX(1.4) scaleY(1.6);
+            opacity: 0;
+        }
+        .button {
+      /* as before ... */
+      --main-focus: #2d8cf0;
+      --font-color: #ffffff;
+      --bg-color-sub: rgb(255, 255, 255);
+      --bg-color: rgba(26, 26, 26, 0.25);
+      box-shadow: 0 8px 32px 0 rgba(41, 41, 41, 0.37);
+      backdrop-filter: blur(10.5px);
+      --main-color: 	#ffffff;
+      width: 150px;
+      height: 40px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      border: 2px solid var(--main-color);
+      box-shadow: 4px 4px var(--main-color);
+      background-color: var(--bg-color);
+      border-radius: 10px;
+      overflow: hidden;
+      position: absolute;
+      top: 10px;
+      right: 30px;
+    }
+
+.button, .button__icon, .button__text {
+  transition: all 0.3s;
+}
+
+.button .button__text {
+	transform: translateX(20px);
+  color: var(--font-color);
+  font-weight: 600;
+}
+
+.button .button__icon {
+  position: absolute;
+  transform: translateX(109px);
+  height: 100%;
+  width: 39px;
+  background-color: var(--bg-color-sub);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button .svg {
+  width: 20px;
+  fill: var(--main-color);
+}
+
+.button:hover {
+  background: var(--bg-color);
+}
+
+.button:hover .button__text {
+  color: transparent;
+}
+
+.button:hover .button__icon {
+  width: 148px;
+  transform: translateX(0);
+}
+
+.button:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0px 0px var(--main-color);
+}
+.s{
+    height: 60px;
+    width: 30px;
+    margin-top: 5px;
+}
+    </style>
+</head>
+<body>
+<div id="vanta-canvas"></div>
+
+    <div id="form-container">
+            <input type="text" id="codeBox" style="padding: 20px; font-size: 16px;" name="id" autocomplete="off">
+            <br>
+            <br>
+            <input type="submit" style="padding: 20px 40px; font-size: 16px;" class="content__button" value="Join" id="goBtn">
+
+        <div class="buttons">
+            <button class="info" onclick="showToast(infoMsg)" style="display: none;" id="b">Info</button>
+        </div>
+       
+    </div>
+    <a href="/create_room" ><button type="submit" class="button" style="margin-bottom:650px; margin-left: 1000px;">
+        <span class="button__text">Create room</span>
+        <span class="button__icon" ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 40" x="0px" y="0px" class="s"><title>create, plus, add, new, more</title><g data-name="Layer 2"><path d="M16,2A14,14,0,1,0,30,16,14.015,14.015,0,0,0,16,2Zm0,26A12,12,0,1,1,28,16,12.013,12.013,0,0,1,16,28Z"/><path d="M21.5,15H17V10.5a1,1,0,0,0-2,0V15H10.5a1,1,0,0,0,0,2H15v4.5a1,1,0,0,0,2,0V17h4.5a1,1,0,0,0,0-2Z"/></g><text x="0" y="47" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">Created by Kiki Rizky</text><text x="0" y="52" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">from the Noun Project</text></svg>
+    </span>
+    </button>
+   </a>
+    <div id="toastBox"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanta/0.5.24/vanta.waves.min.js"></script>
+<script>
+document.getElementById('goBtn').onclick = ()=>{
+    const code = document.getElementById('codeBox').value.trim();
+    if (!/^[A-Za-z0-9]{6}$/.test(code)) return alert("Invalid code format");
+    sessionStorage.setItem('roomCode', code);
+    sessionStorage.setItem('myRole', "user2");
+    window.location = '/chat.html';
+        
+};
+
+        
+let infoMsg = '<i class="fa-solid fa-circle-info"></i> Info: Enter a valid Room id';        
+
+function showToast(msg) {
+            let toast = document.createElement("div");
+            toast.classList.add("toast");
+            toast.innerHTML = msg;
+            toastBox.appendChild(toast);
+        
+            if (msg.includes("info")) {
+                toast.classList.add("info")
+            }
+        
+            setTimeout(() => {
+                toast.remove();
+            }, 5000)
+        }
+</script>
+<script>
+        VANTA.WAVES({
+          el: "#vanta-canvas",
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.00,
+          minWidth: 200.00,
+          scale: 1.00,
+          scaleMobile: 1.00,
+          color: 0x151515,
+          zoom: 0.78
+        })
+    </script>
+</body>
+</html>

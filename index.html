@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Silent-Byte</title>
+		<meta name="description" content="An exploding objects effect made with three.js." />
+		<meta name="keywords" content="webgl, 3d, objects, exploding, shatter, fragment, animation, template, javascript" />
+		<meta name="author" content="Codrops" />
+		<link rel="shortcut icon" href="favicon.ico">
+		<link rel="stylesheet" href="https://use.typekit.net/ldt4auk.css">
+		<link rel="stylesheet" type="text/css" href="css/base.css" />
+		<script>document.documentElement.className="js";var supportsCssVars=function(){var e,t=document.createElement("style");return t.innerHTML="root: { --tmp-var: bold; }",document.head.appendChild(t),e=!!(window.CSS&&window.CSS.supports&&window.CSS.supports("font-weight","var(--tmp-var)")),t.parentNode.removeChild(t),e};supportsCssVars()||alert("Please view this demo in a modern browser that supports CSS Variables.");</script>
+	<style>
+    @font-face {
+      font-family: 'P22ToyBox';
+      src: url('/css/NASALIZA.TTF') format('truetype');
+    }
+</style>
+	</head>
+
+	<body class="demo-1 loading">
+		<main>
+			<div id="container"></div>
+			<div class="frame">
+				
+				<div class="frame__deco">
+					<span class="frame__deco-inner" style="color: #00ff6a;font-family: 'P22ToyBox', sans-serif; font-size: 25px;">Silent-Byte</span>
+				</div>
+				
+			</div><!-- /frame -->
+			<div class="content">
+				<div class="content__item">
+					<button id="takeMeInButton" class="content__button" style="display: none;">Take me in</button>
+				</div>
+				<div class="content__item content__item--details">
+					<h3 class="content__location">Let's Chat</h3>
+					<h1 class="content__title">Silent-Byte</h1>
+					<p class="content__date">Fast & Secured</p>
+				</div>
+				<div class="content__item content__item--details content__item--columns">
+					<div class="content__inner">
+						<span class="content__inner-item">Click</span>
+						<a href="/create_room"><button id="createRoomBtn" class="content__button" type="submit">Create Room</button></a>
+<br>
+						<span class="content__inner-item">To</span>
+						<span class="content__inner-item">chat</span>
+						<span class="content__inner-item">by</span>
+	
+						<span class="content__inner-item">creating </span>
+						<br>
+						<span class="content__inner-item">Room</span>
+						
+					</div>
+					<div class="content__inner">
+						<span class="content__inner-item">Click</span>
+						<a href="/join_room"><button id="joinRoomBtn" class="content__button" type="submit">Join room</button></a>
+<br>
+						<span class="content__inner-item">To</span>
+						<span class="content__inner-item">Join</span>
+						<span class="content__inner-item">an</span>
+	
+						<span class="content__inner-item">already existing</span>
+						<br>
+						<span class="content__inner-item">Room</span>
+						
+					</div>
+					
+				</div>
+			</div>
+		</main>
+		<script src="js/ico.js"></script>
+		<script src="js/TweenMax.min.js"></script>
+		<script src="js/charming.min.js"></script>
+		<script src="js/demo.js"></script>
+		
+		<script>
+			// Automatically click the button when the page loads
+			window.onload = function() {
+				var button = document.getElementById('takeMeInButton');
+				button.click();
+			};
+		</script>
+	</body>
+</html>
