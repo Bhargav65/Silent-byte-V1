@@ -1161,3 +1161,351 @@ border: 1px solid rgba( 255, 255, 255, 0.18 );
             display: none;
         }
 
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE STYLES
+   All rules below only apply at 768px and narrower.
+   Desktop layout is completely unaffected.
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  /* ─── Body & Canvas ──────────────────────────────────────── */
+  body {
+    overflow: hidden;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #vanta-canvas {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;          /* dynamic viewport height — respects mobile browser chrome */
+    overflow: hidden;
+  }
+
+  /* ─── Chat Container: Full-screen on mobile ──────────────── */
+  .chat-container {
+    max-width: 100%;
+    width: 100%;
+    height: calc(100vh - 60px);
+    height: calc(100dvh - 60px);
+    margin: 8px auto 0 auto;
+    border-radius: 14px 14px 0 0;
+    box-sizing: border-box;
+  }
+
+  /* ─── Leave Room Button ──────────────────────────────────── */
+  .button {
+    position: fixed !important;
+    top: 6px;
+    right: 8px;
+    left: auto;
+    margin: 0 !important;
+    width: auto;
+    min-width: 110px;
+    max-width: 140px;
+    height: 36px;
+    font-size: 13px;
+    z-index: 200;
+  }
+
+  .button .button__text {
+    transform: translateX(12px);
+    font-size: 12px;
+  }
+
+  .button .button__icon {
+    transform: translateX(85px);
+    width: 34px;
+  }
+
+  .button:hover .button__icon {
+    width: 100%;
+    transform: translateX(0);
+  }
+
+  /* ─── Circle Buttons (Call / Video) ──────────────────────── */
+  .circle-buttons-wrapper {
+    left: 50%;
+    transform: translateX(-50%);
+    gap: 10px;
+  }
+
+  .circle-container {
+    width: 44px;
+    height: 44px;
+  }
+
+  #room-selection-container {
+    height: 50px;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  /* ─── Message Input Bar ──────────────────────────────────── */
+  #msgInput {
+    width: 100% !important;
+    min-width: 0;
+    font-size: 15px;
+    padding-left: 8px;
+  }
+
+  .message {
+    padding: 0 10px;
+    margin: 6px 8px;
+    min-height: 44px;          /* touch-friendly tap target */
+  }
+
+  .chat-controls {
+    gap: 6px !important;
+    padding: 0 4px;
+  }
+
+  /* ─── Message Bubbles ────────────────────────────────────── */
+  .sender-message,
+  .receiver-message {
+    max-width: 85%;
+    padding: 6px 12px;
+    font-size: 14px;
+    word-break: break-word;
+  }
+
+  .avatar {
+    width: 26px;
+    height: 26px;
+    margin-right: 6px;
+  }
+
+  /* ─── Message Container scrolling ────────────────────────── */
+  .message-container {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+  }
+
+  .message-container::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  /* ─── Avatar Picker (inline row above input) ─────────────── */
+  .avatar-options {
+    min-width: 0;
+    width: calc(100vw - 32px);
+    max-width: 320px;
+    left: -10px;
+    top: -55px;
+    padding: 6px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 18px;
+  }
+
+  .avatar-choice {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+  }
+
+  /* ─── Avatar Dialog (full-screen grid picker) ────────────── */
+  .avatar-dialog-content {
+    min-width: 0;
+    width: calc(100vw - 32px);
+    max-width: 340px;
+    padding: 14px 16px;
+  }
+
+  .avatar-grid {
+    grid-template-columns: repeat(4, 52px);
+    grid-template-rows: auto;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .avatar-grid .avatar-choice {
+    width: 48px;
+    height: 48px;
+  }
+
+  /* ─── Emoji Picker ───────────────────────────────────────── */
+  #custom-emoji-picker {
+    position: fixed !important;
+    left: 50% !important;
+    top: auto !important;
+    bottom: 70px !important;
+    transform: translateX(-50%);
+    width: min(260px, calc(100vw - 24px)) !important;
+    z-index: 9999 !important;
+  }
+
+  /* ─── Toast Notifications ────────────────────────────────── */
+  #toastBox {
+    right: 8px;
+    top: 50px;
+    left: auto;
+    padding: 8px;
+  }
+
+  .toast {
+    width: calc(100vw - 40px);
+    max-width: 280px;
+    height: auto;
+    min-height: 50px;
+    font-size: 13px;
+  }
+
+  /* ─── Status Messages ────────────────────────────────────── */
+  #status-messages {
+    top: 48px;
+    left: 8px;
+    right: 8px;
+    max-width: none;
+  }
+
+  .status {
+    font-size: 11px;
+    padding: 8px;
+    margin: 6px 0;
+  }
+
+  /* ─── Video Call Container ───────────────────────────────── */
+  #video-chat-container {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    border-radius: 0;
+    z-index: 5000;
+  }
+
+  #remote-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #local-video {
+    position: absolute;
+    width: 100px;
+    height: 140px;
+    bottom: 70px;
+    right: 12px;
+    border-radius: 12px;
+    z-index: 5001;
+    object-fit: cover;
+    border: 2px solid rgba(0, 255, 106, 0.4);
+  }
+
+  .button1 {
+    bottom: 16px;
+    right: 50%;
+    transform: translateX(50%);
+    width: 52px;
+    height: 52px;
+    z-index: 5002;
+  }
+
+  /* ─── Audio Call ──────────────────────────────────────────── */
+  #audio-visualizer {
+    width: 80% !important;
+    max-width: 300px;
+  }
+
+  /* ─── Screen Share Container ─────────────────────────────── */
+  #screen-share-container {
+    width: 96vw;
+    height: 60vh;
+    max-width: none;
+    max-height: none;
+  }
+
+  #screen-share-header {
+    padding: 10px 12px;
+  }
+
+  #screen-share-title {
+    font-size: 13px;
+  }
+
+  .screen-share-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  /* ─── File Sharing ───────────────────────────────────────── */
+  .file-name {
+    max-width: 80px;
+    font-size: 13px;
+  }
+
+  .shared-file-message {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  /* ─── Loading indicator ──────────────────────────────────── */
+  #loading {
+    width: auto;
+    padding: 4px 12px;
+  }
+
+  /* ─── Disconnection button ───────────────────────────────── */
+  #disconnectScreenBtn {
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+    line-height: 36px;
+  }
+
+  /* ─── Waiting message ────────────────────────────────────── */
+  .waiting-message {
+    font-size: 14px;
+    text-align: center;
+    padding: 20px 10px;
+  }
+
+  /* ─── Screen share status ────────────────────────────────── */
+  .screen-share-status {
+    top: 8px;
+    right: 8px;
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
+
+/* ─── Extra-small screens (phones < 380px) ─────────────────── */
+@media (max-width: 380px) {
+  .chat-container {
+    margin: 4px auto 0;
+    border-radius: 10px 10px 0 0;
+  }
+
+  .message {
+    padding: 0 6px;
+    margin: 4px 4px;
+  }
+
+  #msgInput {
+    font-size: 14px;
+  }
+
+  .avatar-grid {
+    grid-template-columns: repeat(3, 52px);
+  }
+
+  .button {
+    min-width: 90px;
+    font-size: 11px;
+  }
+
+  .circle-container {
+    width: 38px;
+    height: 38px;
+  }
+}
