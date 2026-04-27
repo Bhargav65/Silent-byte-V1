@@ -95,7 +95,9 @@ class SignalingClient {
 
             if (this.state === ConnectionState.RECONNECTING) {
                 // Re-register with the server using new socket ID
+                console.log('[Signaling] Reconnected, rejoining room...');
                 this._clearReconnectTimer();
+                this.state = ConnectionState.ROOM_JOINED;
                 s.emit('rejoin-room', { roomCode: this.roomCode, role: this.role });
                 this._emit('reconnected');
                 return;
@@ -305,13 +307,19 @@ class PeerManager {
     // ─── Setup WebRTC ──────────────────────────────────────
 
     async setup() {
-        if (this.peerConnection) return; // Already set up
+        // If there's a stale peer connection, clean it up first
+        if (this.peerConnection) {
+            console.log('[Peer] Cleaning up stale connection before setup');
+            this.cleanup();
+        }
 
+        console.log('[Peer] Setting up new WebRTC connection...');
         const config = await this._fetchIceConfig();
         this.peerConnection = new RTCPeerConnection(config);
 
         // ICE connection state monitoring
         this.peerConnection.oniceconnectionstatechange = () => {
+            if (!this.peerConnection) return; // Guard against stale callbacks
             const state = this.peerConnection.iceConnectionState;
             console.log('[Peer] ICE state:', state);
 
@@ -431,7 +439,14 @@ class PeerManager {
     _bindSignalingEvents() {
         this.signaling.on('offer', async ({ sdp }) => {
             try {
+                // If no peer connection yet, set one up (user2 receiving offer)
                 if (!this.peerConnection) await this.setup();
+                // If the peer connection is in a bad state, recreate it
+                if (this.peerConnection.signalingState === 'closed') {
+                    console.log('[Peer] Peer connection closed, recreating for offer');
+                    this.cleanup();
+                    await this.setup();
+                }
                 await this.peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
                 const answer = await this.peerConnection.createAnswer();
                 await this.peerConnection.setLocalDescription(answer);
@@ -458,9 +473,8 @@ class PeerManager {
             }
         });
 
-        this.signaling.on('restart-webrtc', () => {
-            this.restart();
-        });
+        // NOTE: 'restart-webrtc' is handled by chat.html (the UI layer).
+        // PeerManager only handles the signaling relay (offer/answer/ice).
     }
 
     // ─── ICE Restart ───────────────────────────────────────
@@ -492,22 +506,27 @@ class PeerManager {
         if (this.signaling.isConnected()) {
             this.signaling.rejoin();
         }
-        // setup() will be called when 'start-chat' / 'restart-webrtc' arrives
+        // setup() will be called when 'start-chat' / 'restart-webrtc' arrives from server
     }
 
     // ─── Cleanup ───────────────────────────────────────────
 
     cleanup() {
-        if (this.peerConnection) {
-            this.peerConnection.close();
-            this.peerConnection = null;
-        }
-        this.dataChannel = null;
-        this.retryQueue = [];
+        console.log('[Peer] Cleanup called');
         if (this._retryInterval) {
             clearInterval(this._retryInterval);
             this._retryInterval = null;
         }
+        if (this.dataChannel) {
+            try { this.dataChannel.close(); } catch (e) {}
+            this.dataChannel = null;
+        }
+        if (this.peerConnection) {
+            try { this.peerConnection.close(); } catch (e) {}
+            this.peerConnection = null;
+        }
+        this.retryQueue = [];
+        this.iceConfig = null; // Force fresh ICE config fetch on next setup
     }
 
     // ─── Media (Video/Audio) ───────────────────────────────

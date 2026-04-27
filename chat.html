@@ -33,8 +33,7 @@
     <form method="post" action="/logout" id="logout">
       <input type="hidden" id="hide" name="hide">
     </form>
-    <button type="button" class="button" onclick="submitForm()"
-      id="leaveRoomBtn">
+    <button type="button" class="button" onclick="submitForm()" id="leaveRoomBtn">
       <span class="button__text">Leave room</span>
       <span class="button__icon">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -413,7 +412,9 @@
 
     signaling.on('reconnected', () => {
       hideReconnectToast();
-      showStatus('Reconnected!', 'success');
+      showStatus('Reconnected to server!', 'success');
+      // The rejoin-room emitted on reconnect will trigger 'start-chat' / 'restart-webrtc'
+      // from the server, which calls enableChat() → peer.setup()
     });
 
     signaling.on('reconnect-attempt', (attempt, max) => {
@@ -437,8 +438,9 @@
     });
 
     signaling.on('restart-webrtc', () => {
+      console.log('[Chat] restart-webrtc received, re-establishing peer connection...');
       peer.cleanup();
-      enableChat();
+      enableChat(); // calls peer.setup() which creates new RTCPeerConnection + offer/answer
     });
 
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -446,18 +448,18 @@
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     peer.on('connected', (isFirst) => {
       if (isFirst) {
-        showStatus("âœ… Peer connected!", "success");
+        showStatus("Peer connected!", "success");
       } else {
-        showStatus("âœ… Peer reconnected!", "success");
+        showStatus("Peer reconnected!", "success");
       }
     });
 
     peer.on('ice-disconnected', () => {
-      showStatus("âš ï¸ Peer connection lost. Trying to recover...", "error");
+      showStatus("Peer connection lost. Trying to recover...", "error");
     });
 
     peer.on('ice-failed', () => {
-      showStatus("âš ï¸ Peer connection failed. Restarting...", "error");
+      showStatus("Peer connection failed. Restarting...", "error");
     });
 
     peer.on('datachannel-open', () => {
@@ -1037,22 +1039,38 @@
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     function handleOffline() {
       disableChat();
-      showStatus("âš ï¸ You are offline. Waiting for internet...", "error");
-      if (peer.isDataChannelOpen()) {
-        peer.send(JSON.stringify({ type: "peer-offline" }));
-      }
+      showStatus("⚠️ You are offline. Waiting for internet...", "error");
+      // Clean up the dead WebRTC connection
+      peer.cleanup();
     }
 
     function handleOnline() {
-      showStatus("âœ… Internet reconnected. Restoring chat...", "success");
-      if (peer.isDataChannelOpen()) {
-        peer.send(JSON.stringify({ type: "peer-online" }));
-      }
-      // Socket.io auto-reconnect will handle the rest
+      showStatus("✅ Internet reconnected. Waiting for server...", "success");
+
+      // Socket.io will auto-reconnect, but we need to wait for it
+      // then trigger the rejoin flow to re-establish WebRTC
+      let attempts = 0;
+      const maxAttempts = 30; // 30 x 500ms = 15s max wait
+
+      const waitForSocket = setInterval(() => {
+        attempts++;
+        if (signaling.isConnected()) {
+          clearInterval(waitForSocket);
+          console.log('[Chat] Socket reconnected after online event, rejoining room...');
+          showStatus("🔄 Reconnected to server. Restoring chat...", "info");
+          // Rejoin room - this triggers server to send 'start-chat' / 'restart-webrtc'
+          // which calls enableChat() -> peer.setup()
+          signaling.rejoin();
+        } else if (attempts >= maxAttempts) {
+          clearInterval(waitForSocket);
+          showStatus("⚠️ Could not reconnect to server. Please reload the page.", "error");
+        }
+      }, 500);
     }
 
     window.addEventListener("offline", handleOffline);
     window.addEventListener("online", handleOnline);
+
 
   </script>
 
